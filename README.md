@@ -12,7 +12,7 @@ main.py -> app -> app.create_app() -> init_db -> init_frontend -> init_backend
 
 setting => .env
 
-default username: admin password: admin
+default username: admin password: passw0rd
 
 # requirements
 

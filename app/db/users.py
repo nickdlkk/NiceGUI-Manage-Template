@@ -14,12 +14,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from typing_extensions import AsyncGenerator
 
+from app.conf.config import Config
 from app.db import ENGINE
 from app.db.db import get_user_db
 from app.db.model import User
 from app.db.user_schema import UserCreate
+from app.utils.logger import setup_logger, get_logger
 
 SECRET = "SECRET"
+
+config = Config()
+
+setup_logger()
+
+logger = get_logger(__name__)
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
@@ -80,18 +88,22 @@ current_active_user = fastapi_users.current_user(active=True)
 
 
 async def init_user() -> None:
-    password = "admin"
-    email = "admin@admin.com"
-    role = "admin"
     try:
         async with get_async_session_context() as session:
             async with get_user_db_context(session) as user_db:
                 async with get_user_manager_context(user_db) as user_manager:
                     superuser = await user_manager.create(
-                        UserCreate(email=email, password=password, is_superuser=True, role=role)
+                        UserCreate(
+                            username=config.common.initial_admin_user_username,
+                            email="admin@admin.com",
+                            password=config.common.initial_admin_user_password,
+                            is_active=True,
+                            is_verified=True,
+                            is_superuser=True,
+                            role="admin")
                     )
                     print(f"Superuser created {superuser}")
     except UserAlreadyExists:
-        print(f"Superuser {email} already exist")
+        print(f"Superuser already exist")
     except Exception as e:
         raise e

@@ -12,12 +12,14 @@ from sqlalchemy.orm import session
 from app.conf.config import Config
 from app.db import ENGINE, DB_SESSION, DATABASE_URL
 from app.db.model import *
-from app.utils.logger import get_logger
+from app.utils.logger import get_logger, setup_logger
 
+config = Config()
+setup_logger()
 logger = get_logger(__name__)
+metadata = sqlalchemy.MetaData()
 alembic_cfg = AlembicConfig("alembic.ini")
 alembic_cfg.set_main_option("sqlalchemy.url", DATABASE_URL)
-config = Config()
 
 
 def run_upgrade(conn, cfg):
@@ -59,9 +61,9 @@ async def init_db() -> None:
 
         is_alembic_empty = await check_alembic_version_empty(conn)
         if is_alembic_empty:
-            await conn.run_sync(run_stamp, alembic_cfg, "aa3d85891014")
+            await conn.run_sync(run_stamp, alembic_cfg, "799396eac938")
             logger.warning(
-                f"Alembic version table is empty, stamped database to baseline(aa3d85891014)!\n"
+                f"Alembic version table is empty, stamped database to baseline(799396eac938)!\n"
                 "        Note: This is necessary to update from old version. If you see this message, ensure that you have "
                 "already set run_migration to true in config file,\n"
                 "              or run `alembic upgrade head` manually."

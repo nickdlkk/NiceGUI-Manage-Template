@@ -10,7 +10,6 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 from fastapi_users.exceptions import UserAlreadyExists
-from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from typing_extensions import AsyncGenerator
@@ -56,17 +55,11 @@ get_async_session_context = contextlib.asynccontextmanager(get_async_session)
 get_user_db_context = contextlib.asynccontextmanager(get_user_db)
 
 
-@contextlib.asynccontextmanager
-async def get_user_manager_context(user_db):
-    """Context manager usable in a general context"""
+async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 
 
-async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
-    """Dependency to use in a FastAPI context"""
-    async with get_user_manager_context(user_db) as user_manager:
-        yield user_manager
-
+get_user_manager_context = contextlib.asynccontextmanager(get_user_manager)
 
 bearer_transport = BearerTransport(tokenUrl="auth/jwt/login")
 
@@ -87,11 +80,6 @@ current_active_user = fastapi_users.current_user(active=True)
 
 
 async def init_user() -> None:
-    async with ENGINE.begin() as conn:
-        await init_user_pass()
-
-
-async def init_user_pass():
     password = "admin"
     email = "admin@admin.com"
     role = "admin"
@@ -99,7 +87,7 @@ async def init_user_pass():
         async with get_async_session_context() as session:
             async with get_user_db_context(session) as user_db:
                 async with get_user_manager_context(user_db) as user_manager:
-                    superuser = user_manager.create(
+                    superuser = await user_manager.create(
                         UserCreate(email=email, password=password, is_superuser=True, role=role)
                     )
                     print(f"Superuser created {superuser}")

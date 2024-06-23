@@ -2,18 +2,21 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
 
+from app.conf.config import Config
 from app.db.db import init_db
 from app.db.model import User
 
 from app.db.user_schema import UserRead, UserCreate, UserUpdate
 from app.db.users import auth_backend, current_active_user, fastapi_users, init_user
 
+config = Config()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Not needed if you setup a migration system like Alembic
     await init_db()
-    await init_user()
+    if config.common.create_initial_admin_user:
+        await init_user()
     yield
 
 

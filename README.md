@@ -23,6 +23,7 @@ default username: admin password: admin
 - [FastAPI](https://github.com/tiangolo/fastapi)
 - [FastAPIUsers](https://github.com/fastapi-users/fastapi-users) `pip install 'fastapi-users[sqlalchemy]'`
 - [aiosqlite](https://github.com/omnilib/aiosqlite) Sqlite for AsyncIO `pip install aiosqlite`
+- [alembic](https://github.com/sqlalchemy/alembic)
 
 # Ref
 
@@ -32,3 +33,9 @@ default username: admin password: admin
 - https://github.com/zauberzeug/nicegui/tree/main/examples/fastapi
 - https://github.com/ffillouxdev/NiceGui_project-portfolio
 - https://github.com/chatpire/chatgpt-web-share
+
+# usage
+
+## alembic usage
+
+TODO

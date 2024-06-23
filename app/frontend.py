@@ -4,7 +4,7 @@ from fastapi.responses import RedirectResponse
 from nicegui import ui, app, Client
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.db.db import init_db, close_db
+from app.db.db import close_db
 
 unrestricted_page_routes = {'/login', '/register'}
 
@@ -31,7 +31,7 @@ def init(fastapi_app: FastAPI) -> None:
         ui.dark_mode().bind_value(app.storage.user, 'dark_mode')
         ui.checkbox('dark mode').bind_value(app.storage.user, 'dark_mode')
 
-    app.on_startup(init_db)
+    # app.on_startup(init_db)
     app.on_shutdown(close_db)
     app.add_middleware(AuthMiddleware)
 

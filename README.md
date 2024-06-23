@@ -36,6 +36,6 @@ default username: admin password: passw0rd
 
 # usage
 
-## alembic usage
+## [alembic usage](https://alembic.sqlalchemy.org/en/latest/#)
 
 TODO

@@ -47,6 +47,12 @@ app.include_router(
     tags=["users"],
 )
 
+
+@app.get('/hello')
+def read_root():
+    return {'Hello': 'World'}
+
+
 frontend.init(app)
 
 

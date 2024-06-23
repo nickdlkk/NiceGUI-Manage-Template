@@ -5,8 +5,10 @@ from datetime import datetime
 import traceback
 import yaml
 
-from api.conf import Config
-import api.globals as g
+
+import app.globals as g
+
+from app.conf.config import Config
 
 
 def get_log_config():

@@ -102,8 +102,8 @@ async def init_user() -> None:
                             is_superuser=True,
                             role="admin")
                     )
-                    print(f"Superuser created {superuser}")
+                    logger.debug(f"Superuser created {config.common.initial_admin_user_username} {superuser}")
     except UserAlreadyExists:
-        print(f"Superuser already exist")
+        logger.debug(f"admin already exists, skip creating admin user")
     except Exception as e:
         raise e

@@ -2,14 +2,15 @@ from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
 
+from app import frontend
 from app.conf.config import Config
 from app.db.db import init_db
 from app.db.model import User
-
 from app.db.user_schema import UserRead, UserCreate, UserUpdate
 from app.db.users import auth_backend, current_active_user, fastapi_users, init_user
 
 config = Config()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,6 +46,8 @@ app.include_router(
     prefix="/users",
     tags=["users"],
 )
+
+frontend.init(app)
 
 
 @app.get("/authenticated-route")

@@ -12,10 +12,10 @@ from sqlalchemy.orm import session
 from app.conf.config import Config
 from app.db import ENGINE, DB_SESSION, DATABASE_URL
 from app.db.model import *
-from app.utils.logger import get_logger, setup_logger
+from app.utils.logger import get_logger
 
 config = Config()
-setup_logger()
+
 logger = get_logger(__name__)
 metadata = sqlalchemy.MetaData()
 alembic_cfg = AlembicConfig("alembic.ini")
@@ -23,9 +23,11 @@ alembic_cfg.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 
 def run_upgrade(conn, cfg):
+    logger.info("running upgrade...")
     cfg.attributes["connection"] = conn
     command.upgrade(cfg, "head")
     conn.commit()
+    logger.info("upgrade finished!")
 
 
 def run_stamp(conn, cfg, revision):

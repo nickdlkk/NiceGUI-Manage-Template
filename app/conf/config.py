@@ -13,6 +13,7 @@ class CommonSetting(BaseModel):
     print_traceback: bool = True
     create_initial_admin_user: bool = True
     initial_admin_user_username: str = 'admin'
+    initial_admin_user_email: str = 'admin@admin.com'
     initial_admin_user_password: str = 'passw0rd'
 
     @field_validator("initial_admin_user_password")

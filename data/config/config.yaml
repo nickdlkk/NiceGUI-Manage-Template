@@ -1,0 +1,20 @@
+log:
+  console_log_level: INFO
+common:
+  print_sql: false
+  print_traceback: true
+  create_initial_admin_user: true
+  initial_admin_user_username: admin
+  initial_admin_user_email: admin@admin.com
+  initial_admin_user_password: passw0rd
+http:
+  host: 127.0.0.1
+  port: 8000
+  cors_allow_origins:
+  - http://localhost:8000
+  - http://127.0.0.1:8000
+data:
+  data_dir: ./data
+  database_url: sqlite+aiosqlite:///data/app.db
+  run_migration: true
+  max_file_upload_size: 104857600

@@ -19,13 +19,11 @@ from app.db import ENGINE
 from app.db.db import get_user_db
 from app.db.model import User
 from app.db.user_schema import UserCreate
-from app.utils.logger import setup_logger, get_logger
+from app.utils.logger import get_logger
 
 SECRET = "SECRET"
 
 config = Config()
-
-setup_logger()
 
 logger = get_logger(__name__)
 
@@ -88,6 +86,7 @@ current_active_user = fastapi_users.current_user(active=True)
 
 
 async def init_user() -> None:
+    logger.info("init user")
     try:
         async with get_async_session_context() as session:
             async with get_user_db_context(session) as user_db:
@@ -95,14 +94,15 @@ async def init_user() -> None:
                     superuser = await user_manager.create(
                         UserCreate(
                             username=config.common.initial_admin_user_username,
-                            email="admin@admin.com",
+                            email=config.common.initial_admin_user_email,
                             password=config.common.initial_admin_user_password,
                             is_active=True,
                             is_verified=True,
                             is_superuser=True,
                             role="admin")
                     )
-                    logger.debug(f"Superuser created {config.common.initial_admin_user_username} {superuser}")
+                    logger.info(
+                        f"Superuser created username:{config.common.initial_admin_user_username} email:{config.common.initial_admin_user_email} password:{config.common.initial_admin_user_password}")
     except UserAlreadyExists:
         logger.debug(f"admin already exists, skip creating admin user")
     except Exception as e:

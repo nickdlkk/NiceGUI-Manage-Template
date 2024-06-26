@@ -33,9 +33,22 @@ default username: admin password: passw0rd
 - https://github.com/zauberzeug/nicegui/tree/main/examples/fastapi
 - https://github.com/ffillouxdev/NiceGui_project-portfolio
 - https://github.com/chatpire/chatgpt-web-share
+- https://gist.github.com/ProbablyBrian/5a47e6ee2242eb0edb572d07b54dcd73
+- https://github.com/fastapi-users/fastapi-users/discussions/1361
 
 # usage
 
 ## [alembic usage](https://alembic.sqlalchemy.org/en/latest/#)
 
 TODO
+
+# TODO
+- [ ] 添加[sidebar](https://github.com/zauberzeug/nicegui/tree/main/examples/menu_and_tabs)
+- [ ] 更改密码
+- [ ] 注册用户
+- [ ] 用户管理页面
+- [ ] FastAPI Token认证接口
+- [ ] 简单表格增删改查示例
+- [ ] 简单图表示例
+- [ ] 完善使用示例
+- [ ] DockerFile

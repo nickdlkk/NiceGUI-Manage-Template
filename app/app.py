@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI
 from fastapi.routing import APIRoute
 from starlette.routing import Mount
 
-from app import frontend
+from app import app_frontend
 from app.conf.config import Config
 from app.db.db import init_db
 from app.db.model import User
@@ -62,7 +62,7 @@ def read_root():
     return {'Hello': 'World'}
 
 
-frontend.init(app)
+app_frontend.init(app)
 
 
 @app.get("/authenticated-route")

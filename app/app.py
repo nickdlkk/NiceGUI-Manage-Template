@@ -1,6 +1,8 @@
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
+from fastapi.routing import APIRoute
+from starlette.routing import Mount
 
 from app import frontend
 from app.conf.config import Config
@@ -74,9 +76,6 @@ async def authenticated_route(user: User = Depends(current_active_user)):
 #     return RedirectResponse('/hello')
 
 
-from fastapi.routing import APIRoute
-
-
 def get_routes(app: FastAPI):
     routes = []
     for route in app.routes:
@@ -86,6 +85,15 @@ def get_routes(app: FastAPI):
                 "methods": route.methods,
                 "params": route.dependencies
             })
+        elif isinstance(route, Mount):
+            for route in route.routes:
+                if isinstance(route, APIRoute):
+                    routes.append({
+                        "path": route.path,
+                        "methods": route.methods,
+                        "params": route.dependencies,
+                        "is_nicegui": True
+                    })
     return routes
 
 

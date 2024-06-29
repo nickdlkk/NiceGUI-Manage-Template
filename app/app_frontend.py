@@ -90,8 +90,9 @@ def init(fastapi_app: FastAPI) -> None:
     app.on_shutdown(close_db)
     # app.add_middleware(AuthMiddleware)
 
-    app.include_router(example_api_router.router)
-    example_class.ClassExample()
+    # modularization example
+    # app.include_router(example_api_router.router)
+    # example_class.ClassExample()
 
     ui.run_with(
         fastapi_app,

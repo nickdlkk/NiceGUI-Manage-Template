@@ -20,7 +20,7 @@ logger = get_logger(__name__)
 
 
 def init(fastapi_app: FastAPI) -> None:
-    # @app.middleware("http")
+    @app.middleware("http")
     async def auth_middleware(request: Request, call_next):
         if not app.storage.user.get('authenticated', False):
             if request.url.path in Client.page_routes.values() and request.url.path not in unrestricted_page_routes:
@@ -91,7 +91,7 @@ def init(fastapi_app: FastAPI) -> None:
 
     ui.run_with(
         fastapi_app,
-        mount_path='/app',  # NOTE this can be omitted if you want the paths passed to @ui.page to be at the root
-        storage_secret='pick your private secret here',
-        # NOTE setting a secret is optional but allows for persistent storage per user
+        mount_path='/',  # NOTE this can be omitted if you want the paths passed to @ui.page to be at the root
+        storage_secret='SECRET',
+        title='NiceGUI Template'
     )

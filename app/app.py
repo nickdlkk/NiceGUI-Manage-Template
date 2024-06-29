@@ -50,9 +50,9 @@ app = FastAPI(lifespan=lifespan)
 #     prefix="/users",
 #     tags=["users"],
 # )
-@app.get('/')
-def read_root():
-    return {'Hello': 'World'}
+# @app.get('/')
+# def read_root():
+#     return {'Hello': 'World'}
 
 
 @app.get('/hello')

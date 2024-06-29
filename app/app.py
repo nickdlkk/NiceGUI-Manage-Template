@@ -23,6 +23,9 @@ async def lifespan(app: FastAPI):
     await init_db()
     if config.common.create_initial_admin_user:
         await init_user()
+    routes = get_routes(app)
+    for route in routes:
+        logger.info(route)
     yield
 
 
@@ -95,8 +98,3 @@ def get_routes(app: FastAPI):
                         "is_nicegui": True
                     })
     return routes
-
-
-routes = get_routes(app)
-for route in routes:
-    print(route)

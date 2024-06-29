@@ -11,7 +11,7 @@ from app import USER_KEY, USER_AUTHENTICATED
 from app.db.db import close_db
 from app.db.model import User
 from app.db.users import get_user_manager, current_authenticated_user_nicegui
-from app.frontend import example_api_router
+from app.frontend import example_api_router, example_class
 from app.utils.logger import get_logger
 
 unrestricted_page_routes = {'/login', '/register'}
@@ -91,6 +91,7 @@ def init(fastapi_app: FastAPI) -> None:
     # app.add_middleware(AuthMiddleware)
 
     app.include_router(example_api_router.router)
+    example_class.ClassExample()
 
     ui.run_with(
         fastapi_app,

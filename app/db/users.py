@@ -1,5 +1,6 @@
 import contextlib
 import uuid
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import Depends, Request
@@ -10,15 +11,18 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 from fastapi_users.exceptions import UserAlreadyExists
+from nicegui import app
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from typing_extensions import AsyncGenerator
 
+from app import USER_KEY, USER_AUTHENTICATED
 from app.conf.config import Config
 from app.db import ENGINE
 from app.db.db import get_user_db
 from app.db.model import User
 from app.db.user_schema import UserCreate
+from app.exceptions import AuthenticationFailedException
 from app.utils.logger import get_logger
 
 SECRET = "SECRET"
@@ -82,7 +86,33 @@ auth_backend = AuthenticationBackend(
 
 fastapi_users = FastAPIUsers[User, uuid.UUID](get_user_manager, [auth_backend])
 
-current_active_user = fastapi_users.current_user(active=True)
+__current_active_user = fastapi_users.current_user(active=True)
+
+
+async def current_active_user(request: Request, user: User = Depends(__current_active_user)):
+    try:
+        async with get_async_session_context() as session:
+            user_update = await session.get(User, user.id)
+            user_update.last_active_time = datetime.now().astimezone(tz=timezone.utc)
+            session.add(user_update)
+            await session.commit()
+        request.scope["auth_user"] = user
+    except Exception as e:
+        raise e
+    finally:
+        return user
+
+
+async def current_authenticated_user_nicegui() -> User:
+    """Return the currently authenticated user.
+    Used as a dependency, we can ensure users are authenticated
+    before loading the page.
+    """
+    user = app.storage.user.get(USER_KEY)
+    auth = app.storage.user.get(USER_AUTHENTICATED)
+    if user and auth:
+        return user
+    raise AuthenticationFailedException("Anonymous users aren't permitted to access this page.")
 
 
 async def init_user() -> None:

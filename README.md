@@ -52,3 +52,41 @@ TODO
 - [ ] 简单图表示例
 - [ ] 完善使用示例
 - [ ] DockerFile
+
+# Authorization
+
+
+## NiceGUI
+
+NiceGUI的鉴权方式使用NiceGUI自身的存储app.storage.user
+
+登录成功后,在app.storage.user中存储用户信息
+
+需要鉴权的页面使用:
+```python
+from app.db.users import current_authenticated_user_nicegui
+@ui.page('/')
+def show(request: Request, user: User = Depends(current_authenticated_user_nicegui)):
+    pass
+```
+
+## FastAPI
+FastAPI的接口使用FastAPIUsers
+
+```python
+from app.db.users import current_active_user
+@app.get("/authenticated-route")
+async def authenticated_route(user: User = Depends(current_active_user)):
+    return {"message": f"Hello {user.email}!"}
+```
+
+其鉴权方式为:
+```python
+auth_backend = AuthenticationBackend(
+    name="jwt",
+    transport=bearer_transport,
+    get_strategy=get_jwt_strategy,
+)
+```
+
+TODO token auth

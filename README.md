@@ -43,9 +43,11 @@ default username: admin password: passw0rd
 TODO
 
 # TODO
-- [ ] 添加[sidebar](https://github.com/zauberzeug/nicegui/tree/main/examples/menu_and_tabs)
+- [x] 添加[sidebar](https://github.com/zauberzeug/nicegui/tree/main/examples/menu_and_tabs)
+- [ ] 自动注册页面、路由: 新增页面可以自动注册顶部菜单/侧边菜单
+- [ ] 访问记录\日志 
 - [ ] 更改密码
-- [ ] 注册用户
+- [ ] 注册用户\用户登出
 - [ ] 用户管理页面
 - [ ] FastAPI Token认证接口
 - [ ] 简单表格增删改查示例

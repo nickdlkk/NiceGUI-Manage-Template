@@ -38,4 +38,3 @@ def register_derived_classes():
 
 # 当__init__.py被执行时，自动注册所有继承自BaseClass的类
 register_derived_classes()
-print(derived_class_registry)

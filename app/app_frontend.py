@@ -11,7 +11,7 @@ from app import USER_KEY, USER_AUTHENTICATED
 from app.db.db import close_db
 from app.db.model import User
 from app.db.users import get_user_manager, current_authenticated_user_nicegui
-from app.frontend import example_api_router, example_class
+from app.frontend import derived_class_registry
 from app.utils.logger import get_logger
 
 unrestricted_page_routes = {'/login', '/register'}
@@ -89,11 +89,7 @@ def init(fastapi_app: FastAPI) -> None:
     # app.on_startup(init_db)
     app.on_shutdown(close_db)
     # app.add_middleware(AuthMiddleware)
-
-    # modularization example
-    # app.include_router(example_api_router.router)
-    # example_class.ClassExample()
-
+    logger.info(derived_class_registry)
     ui.run_with(
         fastapi_app,
         mount_path='/',  # NOTE this can be omitted if you want the paths passed to @ui.page to be at the root

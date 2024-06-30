@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import uvicorn
 
-from app.app import app
 from app.conf.config import Config
 from app.utils.logger import get_log_config, setup_logger, get_logger
 
@@ -26,9 +25,10 @@ if config.log.console_log_level != "DEBUG":
 
     warnings.filterwarnings("ignore")
 if __name__ == '__main__':
-    uvicorn.run(app, host=config.http.host,
+    uvicorn.run(app="app.app:app", host=config.http.host,
                 port=config.http.port,
                 proxy_headers=True,
                 forwarded_allow_ips='*',
                 log_config=get_log_config(),
+                reload=True,
                 )

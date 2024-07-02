@@ -7,13 +7,14 @@ from app.frontend.module_base import BaseClass
 
 class ModuleA(BaseClass):
     def __init__(self):
+        super().__init__()
         print("ModuleA instantiated")
         # 统一的前缀
         router = APIRouter(prefix='/example')
 
         @router.page('/a')
         def page_b():
-            with theme.frame('- Page A -'):
+            with super().frame('- Page A -'):
                 message('Page A')
                 ui.label('This page is defined in a class.')
 

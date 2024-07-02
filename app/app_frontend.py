@@ -12,6 +12,7 @@ from app.db.db import close_db
 from app.db.model import User
 from app.db.users import get_user_manager, current_authenticated_user_nicegui
 from app.frontend import derived_class_registry
+from app.frontend.router import Router
 from app.utils.logger import get_logger
 
 unrestricted_page_routes = {'/login', '/register'}
@@ -59,6 +60,7 @@ def init(fastapi_app: FastAPI) -> None:
                 ui.checkbox('dark mode').bind_value(app.storage.user, 'dark_mode')
             with ui.tab_panel('B'):
                 ui.label('Content of B')
+                ui.button('GoTo C', on_click=lambda: tabs.set_value('C'))
             with ui.tab_panel('C'):
                 ui.label('Content of C')
 
@@ -86,7 +88,11 @@ def init(fastapi_app: FastAPI) -> None:
             ui.button('Log in', on_click=try_login)
         return None
 
-    # app.on_startup(init_db)
+    def print_routers():
+        router = Router()
+        logger.info("ALL Router:" + str(router.routes))
+
+    app.on_startup(print_routers)
     app.on_shutdown(close_db)
     # app.add_middleware(AuthMiddleware)
     logger.info(derived_class_registry)

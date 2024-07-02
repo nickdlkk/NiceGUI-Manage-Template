@@ -43,9 +43,10 @@ default username: admin password: passw0rd
 TODO
 
 # TODO
+
 - [x] 添加[sidebar](https://github.com/zauberzeug/nicegui/tree/main/examples/menu_and_tabs)
 - [ ] 自动注册页面、路由: 新增页面可以自动注册顶部菜单/侧边菜单
-- [ ] 访问记录\日志 
+- [ ] 访问记录\日志
 - [ ] 更改密码
 - [ ] 注册用户\用户登出
 - [ ] 用户管理页面
@@ -55,8 +56,38 @@ TODO
 - [ ] 完善使用示例
 - [ ] DockerFile
 
-# Authorization
+# Page
 
+## 页面注册
+
+继承`app.frontend.module_base.BaseClass`, 实现`__init__(self)`,在__init__中添加页面
+
+## 页面路由
+
+使用注解`app.frontend.router.Router.page`,页面函数需要使用async.
+
+```python
+from app.frontend.module_base import BaseClass
+
+
+@BaseClass.router.page(path='/a', title='A')
+async def page():
+    pass
+```
+
+使用了该注解的函数,会被`app/frontend/router.py`的`app.frontend.router.Router`接管.
+
+该注解将会调用nicegui.page.page,相当于`@ui.page(path='/')`. 并且会额外的将path添加到Router的routes中,用于在单页应用中跳转.
+
+对应title会被添加到顶部菜单,path是对应的路由.
+
+在点击顶部菜单时,会根据path找到对应的函数,并实现页面内加载.
+
+在通过路由直接进入时,会根据path找到对应的函数,并加载到对应函数页面.
+
+
+
+# Authorization
 
 ## NiceGUI
 
@@ -65,24 +96,31 @@ NiceGUI的鉴权方式使用NiceGUI自身的存储app.storage.user
 登录成功后,在app.storage.user中存储用户信息
 
 需要鉴权的页面使用:
+
 ```python
 from app.db.users import current_authenticated_user_nicegui
+
+
 @ui.page('/')
 def show(request: Request, user: User = Depends(current_authenticated_user_nicegui)):
     pass
 ```
 
 ## FastAPI
+
 FastAPI的接口使用FastAPIUsers
 
 ```python
 from app.db.users import current_active_user
+
+
 @app.get("/authenticated-route")
 async def authenticated_route(user: User = Depends(current_active_user)):
     return {"message": f"Hello {user.email}!"}
 ```
 
 其鉴权方式为:
+
 ```python
 auth_backend = AuthenticationBackend(
     name="jwt",

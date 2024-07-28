@@ -12,6 +12,7 @@ from app.db.db import close_db
 from app.db.model import User
 from app.db.users import get_user_manager, current_authenticated_user_nicegui
 from app.frontend import derived_class_registry
+from app.frontend.frame.left_drawer import QuasarDrawer
 from app.frontend.router import Router
 from app.utils.logger import get_logger
 
@@ -33,36 +34,68 @@ def init(fastapi_app: FastAPI) -> None:
     @ui.page('/')
     def show(request: Request, user: User = Depends(current_authenticated_user_nicegui)):
         with ui.header().classes(replace='row items-center') as header:
-            ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white')
-            with ui.tabs() as tabs:
-                ui.tab('A')
-                ui.tab('B')
-                ui.tab('C')
+            ui.button(on_click=lambda: drawer.toggle_mini(), icon='menu').props('flat color=white')
+
+        #     ui.button(on_click=lambda: left_drawer.toggle(), icon='menu').props('flat color=white')
+        #     with ui.tabs() as tabs:
+        #         ui.tab('A')
+        #         ui.tab('B')
+        #         ui.tab('C')
+        def on_drawer_toggle(e):
+            ui.notify(f'Drawer {"opened" if e.args else "closed"}')
+
+        def on_mini_toggle(e):
+            ui.notify(f'Mini mode {"activated" if e.args else "deactivated"}')
+
+        def on_menu_click(e):
+            ui.notify(f'click {e.args}')
 
         with ui.footer(value=False) as footer:
             ui.label('Footer')
 
-        with ui.left_drawer().classes('bg-blue-100') as left_drawer:
-            ui.label('Side menu')
+        # with ui.left_drawer().classes('bg-blue-100') as left_drawer:
+        #     ui.label('Side menu')
+        test_data = [
+            {
+                "icon": 'perm_identity',
+                "label": 'Account settings',
+                "caption": 'John Doe',
+                "children": [
+                    {"icon": 'inbox', "title": 'Inbox'},
+                    {"icon": 'send', "title": 'Outbox'},
+                    {"icon": 'delete', "title": 'Trash'},
+                    {"icon": 'settings', "title": 'Settings'},
+                    {"icon": 'help', "title": 'Help'}
+                ]
+            },
+            {
+                "icon": 'signal_wifi_off',
+                "label": 'Wifi settings',
+                "children": []
+            }
+        ]
+
+        drawer = QuasarDrawer(menu_data=test_data, on_drawer_toggle=on_drawer_toggle, on_mini_toggle=on_mini_toggle,
+                              on_menu_click=on_menu_click)
 
         with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
             ui.button(on_click=footer.toggle, icon='contact_support').props('fab')
 
-        with ui.tab_panels(tabs, value='A').classes('w-full'):
-            with ui.tab_panel('A'):
-                ui.label('Content of A')
-                ui.label('Hello, FastAPI!')
-                print(f'main_page Auth: {request.headers.get("Authorization")}')
-                print(f'main_page auth: {request.headers.get("authorization")}')
-                print(f'main_page user: {user}')
-                # NOTE dark mode will be persistent for each user across tabs and server restarts
-                ui.dark_mode().bind_value(app.storage.user, 'dark_mode')
-                ui.checkbox('dark mode').bind_value(app.storage.user, 'dark_mode')
-            with ui.tab_panel('B'):
-                ui.label('Content of B')
-                ui.button('GoTo C', on_click=lambda: tabs.set_value('C'))
-            with ui.tab_panel('C'):
-                ui.label('Content of C')
+        # with ui.tab_panels(tabs, value='A').classes('w-full'):
+        #     with ui.tab_panel('A'):
+        #         ui.label('Content of A')
+        #         ui.label('Hello, FastAPI!')
+        #         print(f'main_page Auth: {request.headers.get("Authorization")}')
+        #         print(f'main_page auth: {request.headers.get("authorization")}')
+        #         print(f'main_page user: {user}')
+        #         # NOTE dark mode will be persistent for each user across tabs and server restarts
+        #         ui.dark_mode().bind_value(app.storage.user, 'dark_mode')
+        #         ui.checkbox('dark mode').bind_value(app.storage.user, 'dark_mode')
+        #     with ui.tab_panel('B'):
+        #         ui.label('Content of B')
+        #         ui.button('GoTo C', on_click=lambda: tabs.set_value('C'))
+        #     with ui.tab_panel('C'):
+        #         ui.label('Content of C')
 
     @ui.page('/login')
     async def login(

@@ -11,13 +11,29 @@ logger = get_logger(__name__)
 class RouterFrame(ui.element, component='router_frame.js'):
     pass
 
+
 def singleton(cls):
     instances = {}
+
     def get_instance(*args, **kwargs):
         if cls not in instances:
             instances[cls] = cls(*args, **kwargs)
         return instances[cls]
+
     return get_instance
+
+
+class PageDict:
+    title: str
+    sub_title: str
+    path: str
+    page_func: Callable
+
+    def __init__(self, title: str = None, sub_title: str = None) -> None:
+        self.title = title
+        self.sub_title = sub_title
+        self.path = ''
+
 
 @singleton
 class Router:
@@ -27,7 +43,7 @@ class Router:
     current_tab: str
 
     def __init__(self) -> None:
-        #TODO 拓展这个字典,value增加一级路由/二级路由,标题名称,sort
+        # TODO 拓展这个字典,value增加一级路由/二级路由,标题名称,sort
         self.routes: Dict[str, Callable] = {}
         self.content: ui.element = None
         self.current_tab = ''
@@ -38,15 +54,20 @@ class Router:
             return func
 
         return decorator
+
     def show_route(self):
         self.open(self.current_tab)
 
     def page(self, *page_args, **page_kwargs):
         def decorator(func):
             main_page = None
+            title = None
             # 主页函数由注解加入
             if 'main_page' in page_kwargs:
                 main_page = page_kwargs.pop("main_page")
+            if 'title' in page_kwargs:
+                title = page_kwargs.pop("title")
+
             decorated_func = page(*page_args, **page_kwargs)
 
             # 向page传递的func改为统一的一个主页,添加到routes里的是装饰器修饰的func

@@ -6,13 +6,15 @@ NiceGUI的管理系统模板
 - 数据库ORM:SQLAlchemy
 - 后端:FastAPI
 
+**开发中... 不稳定...**
+
 # Run
 
 main.py -> app -> app.create_app() -> init_db -> init_frontend -> init_backend
 
 setting => .env
 
-default username: admin password: passw0rd
+default username: admin@admin.com password: passw0rd
 
 # requirements
 
@@ -46,6 +48,7 @@ TODO
 
 - [x] 添加[sidebar](https://github.com/zauberzeug/nicegui/tree/main/examples/menu_and_tabs)
 - [ ] 自动注册页面、路由: 新增页面可以自动注册顶部菜单/侧边菜单
+- [ ] 自定义侧边栏
 - [ ] 访问记录\日志
 - [ ] 更改密码
 - [ ] 注册用户\用户登出

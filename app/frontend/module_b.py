@@ -9,7 +9,7 @@ class ModuleB(BaseClass):
         super().__init__()
         print("ModuleB instantiated")
 
-        @BaseClass.router.page(path='/b',main_page=super().main_page)
+        @BaseClass.router.page(path='/b', main_page=super().main_page, title='Page A')
         def page_b():
             # with BaseClass.frame(self, '- Page B -'):
             message('Page B')

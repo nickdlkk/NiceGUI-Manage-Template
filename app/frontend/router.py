@@ -4,6 +4,7 @@ from nicegui import background_tasks, helpers, ui
 from nicegui.page import page
 
 from app.utils.logger import get_logger
+from app.utils.menu_node import MenuNode
 
 logger = get_logger(__name__)
 
@@ -43,8 +44,8 @@ class Router:
     current_tab: str
 
     def __init__(self) -> None:
-        # TODO 拓展这个字典,value增加一级路由/二级路由,标题名称,sort
         self.routes: Dict[str, Callable] = {}
+        self.menus = []  # menuNode添加到这个列表里
         self.content: ui.element = None
         self.current_tab = ''
 
@@ -61,12 +62,12 @@ class Router:
     def page(self, *page_args, **page_kwargs):
         def decorator(func):
             main_page = None
-            title = None
+            label = None
             # 主页函数由注解加入
             if 'main_page' in page_kwargs:
                 main_page = page_kwargs.pop("main_page")
-            if 'title' in page_kwargs:
-                title = page_kwargs.pop("title")
+            if 'label' in page_kwargs:
+                label = page_kwargs.pop("label")
 
             decorated_func = page(*page_args, **page_kwargs)
 
@@ -80,6 +81,14 @@ class Router:
             if path is not None:
                 self.routes[path] = func
                 logger.info(f'Added {func.__name__} to routes with path: {path}')
+                menu = MenuNode(label, path)
+                if 'title' in page_kwargs:
+                    menu.title = page_kwargs.pop("title")
+                if 'caption' in page_kwargs:
+                    menu.caption = page_kwargs.pop("caption")
+                if 'icon' in page_kwargs:
+                    menu.icon = page_kwargs.pop("icon")
+                self.menus.append(menu)
 
             # @wraps(func)
             def wrapper(*args, **kwargs):

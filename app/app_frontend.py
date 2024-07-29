@@ -15,6 +15,7 @@ from app.frontend import derived_class_registry
 from app.frontend.frame.left_drawer import QuasarDrawer
 from app.frontend.router import Router
 from app.utils.logger import get_logger
+from app.utils.menu_node import MenuNode
 
 unrestricted_page_routes = {'/login', '/register'}
 router = APIRouter()
@@ -124,6 +125,9 @@ def init(fastapi_app: FastAPI) -> None:
     def print_routers():
         router = Router()
         logger.info("ALL Router:" + str(router.routes))
+        root_menus = MenuNode.build_menu(router.menus)
+        menu_dict = MenuNode.menus_to_dict(root_menus)
+        logger.info("menu_dict:{}".format(menu_dict))
 
     app.on_startup(print_routers)
     app.on_shutdown(close_db)

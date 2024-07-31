@@ -46,6 +46,7 @@ class Router:
     def __init__(self) -> None:
         self.routes: Dict[str, Callable] = {}
         self.menus = []  # menuNode添加到这个列表里
+        self.virtual_menus_root_node = None  # 方便用于查找
         self.content: ui.element = None
         self.current_tab = ''
 

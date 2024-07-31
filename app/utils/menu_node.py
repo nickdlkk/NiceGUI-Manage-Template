@@ -13,6 +13,10 @@ class MenuNode:
         # 根节点没有 parent_path
         return cls(icon=icon, label=label, caption=caption, parent_path=None)
 
+    @classmethod
+    def create_virtual_root_node(cls, children):
+        return cls(label="virtual", path=None, children=children)
+
     @staticmethod
     def build_menu(menus):
         # 将根节点添加到结果列表中，根节点的 parent_path 应为 None
@@ -42,6 +46,17 @@ class MenuNode:
             "caption": self.caption,
             "children": [child.to_dict() for child in self.children] if self.children else []
         }
+
+    def find_by_label(self, label):
+        # 寻找子节点 找到对应label的节点
+        if self.label == label:
+            return self
+        for child in self.children:
+            found = child.find_by_label(label)
+            if found is not None:
+                return found
+        # 如果没有找到匹配的节点，则显式返回None
+        return None
 
     @staticmethod
     def menus_to_dict(menus):

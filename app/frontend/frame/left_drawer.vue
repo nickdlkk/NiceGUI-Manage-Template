@@ -14,40 +14,51 @@
     >
       <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 0 }">
         <q-list bordered class="rounded-borders">
-          <q-expansion-item
-              v-for="item in menuData"
-              :key="item.label"
-              :expand-separator="true"
-              :icon="item.icon"
-              :label="item.label"
-              :caption="item.caption || ''"
-          >
-            <q-list padding class="rounded-borders text-primary">
-              <q-item
-                  v-for="child in item.children"
-                  :key="child.title"
-                  clickable
-                  v-ripple
-                  :active="link === child.title"
-                  @click="link = child.title; menuClick()"
-                  active-class="my-menu-link"
-              >
-                <q-item-section avatar>
-                  <q-icon :name="child.icon"/>
-                </q-item-section>
-                <q-item-section>
-                  {{ child.title }}
-                </q-item-section>
-              </q-item>
-            </q-list>
-            <template v-if="!item.children || item.children.length === 0">
-              <q-card>
-                <q-card-section>
-                  {{ item.defaultContent || 'No content available.' }}
-                </q-card-section>
-              </q-card>
-            </template>
-          </q-expansion-item>
+          <div v-for="item in menuData" :key="item.label">
+            <q-expansion-item
+                v-if="item.children && item.children.length > 0"
+                :expand-separator="true"
+                :icon="item.icon"
+                :label="item.label"
+                :caption="item.caption || ''"
+            >
+              <template #default>
+                <q-list padding class="rounded-borders text-primary">
+                  <q-item
+                      v-for="child in item.children"
+                      :key="child.title"
+                      clickable
+                      v-ripple
+                      :active="link === child.title"
+                      @click="link = child.title; menuClick()"
+                      active-class="my-menu-link"
+                  >
+                    <q-item-section avatar v-if="item.icon">
+                      <q-icon :name="child.icon"/>
+                    </q-item-section>
+                    <q-item-section>
+                      {{ child.title }}
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </template>
+            </q-expansion-item>
+            <q-item
+                v-else
+                clickable
+                v-ripple
+                :active="link === item.label"
+                @click="link = item.label; menuClick()"
+                active-class="my-menu-link"
+            >
+              <q-item-section avatar v-if="item.icon">
+                <q-icon :name="item.icon"/>
+              </q-item-section>
+              <q-item-section>
+                {{ item.label }}
+              </q-item-section>
+            </q-item>
+          </div>
         </q-list>
       </q-scroll-area>
 

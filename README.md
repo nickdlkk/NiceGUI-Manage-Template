@@ -47,8 +47,8 @@ TODO
 # TODO
 
 - [x] 添加[sidebar](https://github.com/zauberzeug/nicegui/tree/main/examples/menu_and_tabs)
-- [ ] 自动注册页面、路由: 新增页面可以自动注册顶部菜单/侧边菜单
-- [ ] 自定义侧边栏
+- [x] 自动注册页面、路由: 新增页面可以自动注册~~顶部菜单/~~侧边菜单
+- [x] 自定义侧边栏
 - [ ] 访问记录\日志
 - [ ] 更改密码
 - [ ] 注册用户\用户登出

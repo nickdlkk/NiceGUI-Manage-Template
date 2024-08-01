@@ -13,7 +13,7 @@ from app.db.model import User
 from app.db.users import get_user_manager, current_authenticated_user_nicegui
 from app.frontend import derived_class_registry
 from app.frontend.frame.left_drawer import QuasarDrawer
-from app.frontend.router import Router
+from app.frontend.frame.router import Router
 from app.utils.logger import get_logger
 from app.utils.menu_node import MenuNode
 

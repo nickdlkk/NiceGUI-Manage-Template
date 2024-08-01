@@ -3,7 +3,7 @@ from contextlib import contextmanager
 from nicegui import ui
 
 from app.frontend.frame.left_drawer import QuasarDrawer
-from app.frontend.router import Router
+from app.frontend.frame.router import Router
 from app.utils.logger import get_logger
 from app.utils.menu_node import MenuNode
 

@@ -1,6 +1,5 @@
 from nicegui import ui, APIRouter, app
 
-from app.frontend import theme
 from app.frontend.message import message
 from app.frontend.module_base import BaseClass
 

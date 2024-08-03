@@ -1,0 +1,12 @@
+fastapi==0.112.0
+fastapi_users==13.0.0
+fastapi_users_db_sqlalchemy==6.0.1
+nicegui==1.4.30
+pydantic==2.8.2
+PyYAML==6.0.1
+PyYAML==6.0.1
+ruamel.base==1.0.0
+SQLAlchemy==2.0.31
+starlette==0.38.2
+typing_extensions==4.12.2
+uvicorn==0.30.5

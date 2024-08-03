@@ -16,7 +16,23 @@ setting => .env
 
 default username: admin@admin.com password: passw0rd
 
+# Test
+
+Pycharm使用FastAPI类型的方式启动，可以使用参数`--reload`，每次修改代码会自动重启(Pycharm有问题,不能自动重启)
+
+参数:
+
+application file : \NiceGUI-Manage-Template\app\app.py
+
+application name : app
+
+Uvicorn options: --reload
+
+或者使用命令行启动: `uvicorn app.app:app --reload`
+
 # requirements
+
+pip install -r requriements.txt
 
 依赖
 
@@ -90,8 +106,6 @@ async def page():
 在点击顶部菜单时,会根据path找到对应的函数,并实现页面内加载.
 
 在通过路由直接进入时,会根据path找到对应的函数,并加载到对应函数页面.
-
-
 
 # Authorization
 

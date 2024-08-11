@@ -39,7 +39,7 @@ import_module = get_submodule(__path__, None)
 # 当__init__.py被执行时，自动注册所有继承自BaseClass的类，以此来注册所有装饰器
 instance_dict = {}
 for module in import_module:
-    print(f"Registering derived class {module.__name__} in {module}")
+    # print(f"Registering derived class {module.__name__} in {module}")
     # 遍历模块中的所有成员
     for name, obj in inspect.getmembers(module, inspect.isclass):
         # 检查类是否继承自BaseClass且不是BaseClass本身

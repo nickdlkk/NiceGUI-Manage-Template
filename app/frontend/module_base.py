@@ -1,7 +1,10 @@
+import contextlib
 from contextlib import contextmanager
 
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from nicegui import ui
 
+from app.db.users import get_async_session_context, get_user_db_context, get_user_manager_context, UserManager
 from app.frontend.frame.left_drawer import QuasarDrawer
 from app.frontend.frame.router import Router
 from app.utils.logger import get_logger
@@ -70,3 +73,16 @@ class BaseClass:
         self.router.frame().classes('w-full p-4 bg-gray-100')
         with ui.column().classes('absolute-center items-center'):
             yield
+
+    @contextlib.asynccontextmanager
+    async def get_db_user_manager_async(self) -> UserManager:
+        async with get_async_session_context() as session:
+            async with get_user_db_context(session) as user_db:
+                async with get_user_manager_context(user_db) as user_manager:
+                    yield user_manager
+
+    @contextlib.asynccontextmanager
+    async def get_db_user_db_async(self) -> SQLAlchemyUserDatabase:
+        async with get_async_session_context() as session:
+            async with get_user_db_context(session) as user_db:
+                yield user_db

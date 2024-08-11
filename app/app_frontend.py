@@ -113,7 +113,7 @@ def init(fastapi_app: FastAPI) -> None:
                 logger.info(f'User {username.value} authenticated')
                 ui.navigate.to(app.storage.user.get('referrer_path', '/'))  # go back to where the user wanted to go
 
-        if app.storage.user.get('authenticated', False):
+        if app.storage.user.get(USER_AUTHENTICATED, False):
             return RedirectResponse('/')
         with ui.card().classes('absolute-center'):
             username = ui.input('Username').on('keydown.enter', try_login)
@@ -121,6 +121,12 @@ def init(fastapi_app: FastAPI) -> None:
                                                                                            try_login)
             ui.button('Log in', on_click=try_login)
         return None
+
+    @ui.page('/logout')
+    async def logout() -> Optional[RedirectResponse]:
+        if app.storage.user.get(USER_AUTHENTICATED, True):
+            app.storage.user.update({USER_KEY: "", USER_AUTHENTICATED: False})
+            return RedirectResponse('/')
 
     def print_routers():
         router = Router()

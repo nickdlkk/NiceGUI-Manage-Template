@@ -65,8 +65,11 @@ TODO
 - [x] 添加[sidebar](https://github.com/zauberzeug/nicegui/tree/main/examples/menu_and_tabs)
 - [x] 自动注册页面、路由: 新增页面可以自动注册~~顶部菜单/~~侧边菜单
 - [x] 自定义侧边栏
+- [ ] 顶部栏右侧镶嵌用户信息
 - [ ] 访问记录\日志
-- [ ] 更改密码
+- [x] 更改密码\更改邮箱和用户名
+- [ ] 增加系统配置表和权限表
+- [ ] 引入权限控制pycasbin
 - [ ] 注册用户\用户登出
 - [ ] 用户管理页面
 - [ ] 增加首页\WIKI页

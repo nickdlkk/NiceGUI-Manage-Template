@@ -1,8 +1,9 @@
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_users import exceptions
 from nicegui import ui, app
 from starlette.responses import RedirectResponse
 
-from app import USER_KEY, USER_AUTHENTICATED
+from app import USER_KEY, USER_AUTHENTICATED, USER_MODEL, USER_NAME
 from app.db.model import User
 from app.frontend.message import message
 from app.frontend.module_base import BaseClass
@@ -36,13 +37,13 @@ class UserInfoPage(BaseClass):
                         user = await user_manager.authenticate(credentials)
                     except Exception as e:
                         logger.error(e)
-                        ui.notify("系统错误")
+                        ui.notify("系统错误", type='negative')
                 if user is None:
                     error_label.set_text('原密码错误!')
                     return None
                 if not user.is_active:
                     error_label.set_text('该用户已被禁用!')
-                    ui.notify("该用户已被禁用!")
+                    ui.notify("该用户已被禁用!", type='negative')
                     return None
                 return user
 
@@ -62,7 +63,7 @@ class UserInfoPage(BaseClass):
                             return True
                 except Exception as e:
                     logger.error(e)
-                    ui.notify("系统错误!")
+                    ui.notify("系统错误!", type='negative')
                     dialog.submit(False)
                     return False
 
@@ -86,19 +87,53 @@ class UserInfoPage(BaseClass):
                 if result is not None:
                     # 修改密码后需要登出,重新登录,跳转到登录页面
                     if result:
-                        ui.notify('密码修改成功，请刷新页面重新登录!')
+                        ui.notify('密码修改成功，请刷新页面重新登录!', type='positive')
                         app.storage.user.update({USER_KEY: "", USER_AUTHENTICATED: False})
                         # RedirectResponse('/') 重定向不起作用,需要手动刷新页面
                     return
 
+            async def change_info(username, email):
+                if username == "" or email == "":
+                    ui.notify('请输入完整信息!')
+                    return
+                change_info_dict = {}
+                if username != app.storage.user.get(USER_MODEL)['username']:
+                    change_info_dict['username'] = username
+                if email != app.storage.user.get(USER_MODEL)['email']:
+                    try:
+                        async with self.get_db_user_manager_async() as user_manager:
+                            await user_manager.get_by_email(email)
+                            ui.notify('该邮箱已被使用!', type='warning')
+                            return
+                    except exceptions.UserNotExists:
+                        change_info_dict['email'] = email
+                try:
+                    async with self.get_db_user_db_async() as user_db:
+                        async with self.get_db_user_manager_async() as user_manager:
+                            try:
+                                user = await user_manager.get_by_email(app.storage.user.get(USER_MODEL)['email'])
+                            except exceptions.UserNotExists:
+                                ui.notify('当前用户不存在，请刷新页面重试!')
+                                return
+                        updated_user = await user_db.update(user, change_info_dict)
+                        app.storage.user.update(
+                            {USER_MODEL: updated_user.to_dict(), USER_KEY: email, USER_NAME: username})
+                        ui.notify('修改成功!', type='positive', position='top')
+                except Exception as e:
+                    logger.error(e)
+                    ui.notify("系统错误!", type='negative')
+
             message('userInfo')
+            if app.storage.user is None:
+                ui.notify('请先登录!', type='negative')
+                return RedirectResponse('/')
             with ui.card():
                 with ui.grid(columns=2):
                     ui.label('Name:')
-                    ui.input('username')
+                    username = ui.input('username', value=app.storage.user.get(USER_MODEL)['username'])
 
                     ui.label('Email')
-                    ui.input('email')
+                    email = ui.input('email', value=app.storage.user.get(USER_MODEL)['email'])
                 with ui.row():
                     ui.button('修改密码', on_click=lambda: change_password())
-                    ui.button('保存', on_click=lambda: ui.notify('save'))
+                    ui.button('保存', on_click=lambda: change_info(username.value, email.value))

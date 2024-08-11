@@ -12,6 +12,7 @@ from fastapi_users.authentication import (
 )
 from fastapi_users.exceptions import UserAlreadyExists
 from nicegui import app
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from typing_extensions import AsyncGenerator
@@ -121,6 +122,24 @@ async def init_user() -> None:
         async with get_async_session_context() as session:
             async with get_user_db_context(session) as user_db:
                 async with get_user_manager_context(user_db) as user_manager:
+                    try:
+                        result = await session.execute(
+                            select(User).filter(User.username == config.common.initial_admin_user_username)
+                        )
+                        user = result.fetchone()
+                        if user:
+                            return
+                    except Exception as e:
+                        logger.error(e)
+                    try:
+                        result = await session.execute(
+                            select(User).filter(User.email == config.common.initial_admin_user_email)
+                        )
+                        user = result.fetchone()
+                        if user:
+                            return
+                    except Exception as e:
+                        logger.error(e)
                     superuser = await user_manager.create(
                         UserCreate(
                             username=config.common.initial_admin_user_username,

@@ -120,7 +120,11 @@ class Router:
                 ''')
                 result = builder()
                 if helpers.is_coroutine_function(builder):
-                    await result
+                    try:
+                        await result
+                    except Exception as e:
+                        logger.exception(e)
+                        ui.notify("渲染错误")
 
         self.content.clear()
         background_tasks.create(build())

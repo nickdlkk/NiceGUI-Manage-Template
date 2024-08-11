@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_users import BaseUserManager
 from nicegui import ui, app, Client
 
-from app import USER_KEY, USER_AUTHENTICATED
+from app import USER_KEY, USER_AUTHENTICATED, USER_MODEL, USER_NAME
 from app.db.db import close_db
 from app.db.model import User
 from app.db.users import get_user_manager, current_authenticated_user_nicegui
@@ -103,20 +103,21 @@ def init(fastapi_app: FastAPI) -> None:
             user_manager: BaseUserManager = Depends(get_user_manager)
     ) -> Optional[RedirectResponse]:
         async def try_login() -> None:
-            credentials = OAuth2PasswordRequestForm(username=username.value, password=password.value)
+            credentials = OAuth2PasswordRequestForm(username=email.value, password=password.value)
             user = await user_manager.authenticate(credentials)
             if user is None or not user.is_active:
-                logger.info(f'Authentication failed for user {username.value}')
-                ui.notify('Wrong username or password', color='negative')
+                logger.info(f'Authentication failed for user {email.value}')
+                ui.notify('Wrong email or password', color='negative')
             else:
-                app.storage.user.update({USER_KEY: username.value, USER_AUTHENTICATED: True})
-                logger.info(f'User {username.value} authenticated')
+                app.storage.user.update({USER_KEY: email.value, USER_AUTHENTICATED: True, USER_MODEL: user.to_dict(),
+                                         USER_NAME: user.username})
+                logger.info(f'User {email.value} authenticated')
                 ui.navigate.to(app.storage.user.get('referrer_path', '/'))  # go back to where the user wanted to go
 
         if app.storage.user.get(USER_AUTHENTICATED, False):
             return RedirectResponse('/')
         with ui.card().classes('absolute-center'):
-            username = ui.input('Username').on('keydown.enter', try_login)
+            email = ui.input('email').on('keydown.enter', try_login)
             password = ui.input('Password', password=True, password_toggle_button=True).on('keydown.enter',
                                                                                            try_login)
             ui.button('Log in', on_click=try_login)

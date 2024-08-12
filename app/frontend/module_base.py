@@ -1,5 +1,6 @@
 import contextlib
 from contextlib import contextmanager
+from uuid import uuid4
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from nicegui import ui
@@ -28,6 +29,20 @@ class BaseClass:
         ui.colors(primary='#6E93D6', secondary='#53B689', accent='#111B1E', positive='#53B689')
         with ui.header().classes(replace='row items-center') as header:
             ui.button(on_click=lambda: drawer.toggle_mini(), icon='menu').props('flat color=white')
+            ui.space()
+            ui.label()
+            ui.space()
+            with ui.row():
+                user_id = str(uuid4())
+                avatar = f'https://robohash.org/{user_id}?bgset=bg2'
+                with ui.avatar().on('click').on('mousemove', lambda: menu.open()) as avatar_ui:
+                    ui.image(avatar)
+                    with ui.menu().props('auto-close') as menu:
+                        ui.menu_item('账号信息', lambda: ui.navigate.to('/user/info'))
+                        ui.menu_item('Menu item 2', lambda: ui.notify('Selected item 2'))
+                        ui.menu_item('Menu item 3 (keep open)',
+                                     lambda: ui.notify('Selected item 3'), auto_close=False)
+
         # this places the content which should be displayed
         self.router.frame().classes('w-full p-4 bg-gray-100')
 

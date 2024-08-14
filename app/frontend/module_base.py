@@ -3,8 +3,10 @@ from contextlib import contextmanager
 from uuid import uuid4
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
+from nicegui import app
 from nicegui import ui
 
+from app import USER_KEY
 from app.db.users import get_async_session_context, get_user_db_context, get_user_manager_context, UserManager
 from app.frontend.frame.left_drawer import QuasarDrawer
 from app.frontend.frame.router import Router
@@ -38,10 +40,10 @@ class BaseClass:
                 with ui.avatar().on('click').on('mousemove', lambda: menu.open()) as avatar_ui:
                     ui.image(avatar)
                     with ui.menu().props('auto-close') as menu:
+                        with ui.row():
+                            ui.icon('mail', color='primary').classes('text-2xl')
+                            ui.label(app.storage.user.get(USER_KEY)).classes('text-center vertical-middle')
                         ui.menu_item('账号信息', lambda: ui.navigate.to('/user/info'))
-                        ui.menu_item('Menu item 2', lambda: ui.notify('Selected item 2'))
-                        ui.menu_item('Menu item 3 (keep open)',
-                                     lambda: ui.notify('Selected item 3'), auto_close=False)
 
         # this places the content which should be displayed
         self.router.frame().classes('w-full p-4 bg-gray-100')

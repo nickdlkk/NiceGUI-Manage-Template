@@ -10,4 +10,4 @@ class User(SQLAlchemyBaseUserTableUUID, Base):
     role: str = Column(String, default='user')
 
     def to_dict(self):
-        return {"username": self.username, "role": self.role, "email": self.email}
+        return {"id": self.id, "username": self.username, "role": self.role, "email": self.email}

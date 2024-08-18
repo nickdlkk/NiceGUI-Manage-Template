@@ -1,5 +1,6 @@
 import contextlib
 from contextlib import contextmanager
+from typing import AsyncContextManager
 from uuid import uuid4
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
@@ -92,14 +93,14 @@ class BaseClass:
             yield
 
     @contextlib.asynccontextmanager
-    async def get_db_user_manager_async(self) -> UserManager:
+    async def get_db_user_manager_async(self) -> AsyncContextManager[UserManager]:
         async with get_async_session_context() as session:
             async with get_user_db_context(session) as user_db:
                 async with get_user_manager_context(user_db) as user_manager:
                     yield user_manager
 
     @contextlib.asynccontextmanager
-    async def get_db_user_db_async(self) -> SQLAlchemyUserDatabase:
+    async def get_db_user_db_async(self) -> AsyncContextManager[SQLAlchemyUserDatabase]:
         async with get_async_session_context() as session:
             async with get_user_db_context(session) as user_db:
                 yield user_db

@@ -1,3 +1,4 @@
+import contextlib
 from typing import AsyncGenerator
 
 import sqlalchemy
@@ -114,3 +115,24 @@ def get_db() -> session:
         yield db
     finally:
         db.close()
+
+
+class DBSessionManager(contextlib.AsyncContextDecorator):
+    """
+    # 使用上下文管理器
+    async with DBSessionManager() as session:
+        # 在这里使用 db 进行数据库操作
+        result = await session.execute(select(table)) #执行 SQL 语句
+        rows = result.fetchall() # 获取查询结果
+        # 获取所有实体
+        entities = result.scalars().all()  # 或者使用 result.all() 获取包含字典的列表
+        await session.commit() # 提交事务
+        pass  # db 会自动在离开 with 块时被关闭
+    """
+
+    async def __aenter__(self) -> AsyncSession:
+        self.db = DB_SESSION()
+        return self.db
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await  self.db.close()
